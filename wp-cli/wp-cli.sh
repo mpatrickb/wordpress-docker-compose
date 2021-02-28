@@ -35,8 +35,7 @@ fi
     wp site switch-language nl_NL
     #wp language core activate nl_NL
     #wp plugin install bbpress --activate
-wp theme install oceanwp --activate
-wp plugin install ocean-extra --activate
+
 wp plugin install translatepress-multilingual --activate
 wp plugin install wordpress-seo --activate
 
@@ -44,5 +43,7 @@ wp plugin install contact-form-7 --activate
 wp plugin install contact-form-7-honeypot --activate
 
 wp plugin install sucuri-scanner --activate
-
+wp plugin install jf3-maintenance-mode --activate
 wp plugin install all-in-one-wp-security-and-firewall --activate
+
+wp plugin install wordpress-seo contact-form-7 contact-form-7-honeypot sucuri-scanner jf3-maintenance-mode all-in-one-wp-security-and-firewall --activate
