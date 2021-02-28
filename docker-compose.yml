@@ -13,8 +13,13 @@ services:
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_NAME: "${DB_NAME}"
-      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_USER: "${DB_USERNAME}"
       WORDPRESS_DB_PASSWORD: "${DB_ROOT_PASSWORD}"
+      WORDPRESS_DEBUG: 1
+      WORDPRESS_CONFIG_EXTRA: |
+        # define('WP_ALLOW_MULTISITE', false );
+        # define('MULTISITE', true);
+        # define('SUBDOMAIN_INSTALL', false);
     depends_on:
       - db
     links:
@@ -23,11 +28,19 @@ services:
   wpcli:
     image: wordpress:cli
     volumes:
-      - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
       - ./wp-app:/var/www/html
+      - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+      #- ./wp-cli:/wp-cli
+      - ./wp-cli/wp-cli.sh:/var/www/html/wp-cli.sh
+      - ./wp-cli/wp-cli.yml:/var/www/html/wp-cli.yml
+    user: xfs
     depends_on:
       - db
       - wp
+    command: >
+      
+      /bin/bash -c "/var/www/html/wp-cli.sh" &&
+      alias wp2="docker-compose run --rm wpcli --path=/var/www/html"
 
   pma:
     image: phpmyadmin/phpmyadmin
@@ -45,17 +58,20 @@ services:
     image: mysql:latest # https://hub.docker.com/_/mysql/ - or mariadb https://hub.docker.com/_/mariadb
     ports:
       - ${IP}:3306:3306 # change ip if required
-    command: [
-        '--default_authentication_plugin=mysql_native_password',
-        '--character-set-server=utf8mb4',
-        '--collation-server=utf8mb4_unicode_ci'
-    ]
+    #command: [
+    #    '--default_authentication_plugin=mysql_native_password',
+    #    '--character-set-server=utf8mb4',
+    #    '--collation-server=utf8mb4_unicode_ci'
+    #]
     volumes:
-      - ./wp-data:/docker-entrypoint-initdb.d
-      - db_data:/var/lib/mysql
+    #  - ./wp-data:/docker-entrypoint-initdb.d
+    #  - db_data:/var/lib/mysql
+      - db:/var/lib/mysql
     environment:
       MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_USER: "${DB_USERNAME}"
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
 
 volumes:
   db_data:
+  db:

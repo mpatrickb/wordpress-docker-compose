@@ -1,0 +1,8 @@
+# path: /var/www/html
+
+core install:
+	url: http://localhost/
+	title: Website
+	admin_user: Patrick
+	admin_password: Test123
+	admin_email: contact@2develop.nl
